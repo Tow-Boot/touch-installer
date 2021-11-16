@@ -1,32 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <lvgl/lvgl.h>
-#include <lv_drv_conf.h>
+
+#include "conf.h"
 
 #include <hal.h>
 #include <scale.h>
 #include <lv_lib_freetype/lv_freetype.h>
 #include <lv_lib_nanosvg/lv_nanosvg.h>
-#include "theme.h"
 
-#define FRAME_RATE 1 / 60
-#define SECOND_AS_MICROSECONDS 1000000
+#include "theme.h"
 
 #if USE_MONITOR
 extern int monitor_height;
 extern int monitor_width;
-#endif
-
-#define INSTALL_TO_SPI 0
-#define INSTALL_TO_EMMC 1
-
-#if INSTALL_TO_SPI
-#define INSTALL_LOCATION "SPI Flash"
-#elif INSTALL_TO_EMMC
-#define INSTALL_LOCATION "eMMC"
-#else
-#error INSTALL_TO_XXX not given
 #endif
 
 static void btn_event_cb(lv_obj_t * btn, lv_event_t event);
@@ -169,7 +156,7 @@ window_t* tbgui_main_window_init(void)
     lv_obj_set_width(description_label, lv_obj_get_width_fit(window->main_container));
     lv_label_set_text(
 		description_label,
-		"\nThis application is used to manage the Tow-Boot installation on " INSTALL_LOCATION ".\n\nUse one of the following options.\n"
+		"\nThis application is used to manage the Tow-Boot installation on " INSTALL_LOCATION ".\n\nUse one of the following options.\n"
 	);
 
 	// Buttons
@@ -179,7 +166,7 @@ window_t* tbgui_main_window_init(void)
 		APP_ACTION_INSTALL,
 		"Install Tow-Boot to " INSTALL_LOCATION
 	);
-#if INSTALL_TO_SPI
+#if TBGUI_INSTALL_TO_SPI
 	add_button(
 		window->actions_container,
 		APP_ACTION_ERASE,
@@ -294,7 +281,7 @@ int main()
 #	endif
 #endif
 
-	hal_init("./");
+	hal_init(TBGUI_ASSETS_PATH);
 	font_init();
 	lv_nanosvg_init();
 	lv_anim_core_init();
