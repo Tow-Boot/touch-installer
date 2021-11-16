@@ -17,6 +17,7 @@ include $(LVGL_DIR)/lvgui.mk
 # Additional source files
 CSRCS += ./src/theme.c
 CSRCS += ./src/main.c
+CSRCS += ./src/tbgui_parts.c
 CONFFILES += ./src/conf.h
 
 OBJEXT ?= .o
