@@ -84,8 +84,8 @@ lv_obj_t* add_container(lv_obj_t* parent, bool transp)
 	}
 	int width = lv_obj_get_width_fit(parent);
 	if (width > lv_obj_get_height_fit(parent)) {
-		width = lv_obj_get_height_fit(parent);
-		//width = lv_obj_get_height_fit(parent) * 9 / 16;
+		//width = lv_obj_get_height_fit(parent);
+		width = lv_obj_get_height_fit(parent) * 9 / 16;
 	}
 	lv_obj_set_width(container, width);
 
