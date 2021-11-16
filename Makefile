@@ -15,7 +15,7 @@ LVGL_ENV_SIMULATOR ?= 1
 include $(LVGL_DIR)/lvgui.mk
 
 # Additional source files
-CSRCS += ./main.c
+CSRCS += ./src/main.c
 
 OBJEXT ?= .o
 
