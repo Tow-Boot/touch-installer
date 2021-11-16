@@ -68,11 +68,19 @@ lv_obj_t* add_button(lv_obj_t* parent, app_actions_t action, char* label_text)
 
 lv_obj_t* add_container(lv_obj_t* parent, bool transp)
 {
+	static lv_style_t container_style;
+	static bool init_done = false;
+	if (!init_done) {
+		lv_style_copy(&container_style, &lv_style_transp);
+		container_style.body.padding.inner = PIXEL_SCALE(24);
+		init_done = true;
+	}
+
 	lv_obj_t * container = lv_cont_create(parent, NULL);
 	lv_cont_set_layout(container, LV_LAYOUT_COL_M);
 	lv_cont_set_fit2(container, LV_FIT_NONE, LV_FIT_TIGHT);
 	if (transp) {
-		lv_cont_set_style(container, LV_CONT_STYLE_MAIN, &lv_style_transp_fit);
+		lv_cont_set_style(container, LV_CONT_STYLE_MAIN, &container_style);
 	}
 	int width = lv_obj_get_width_fit(parent);
 	if (width > lv_obj_get_height_fit(parent)) {
@@ -119,6 +127,12 @@ window_t* create_window(char* title_text)
 	lv_label_set_align(title, LV_LABEL_ALIGN_CENTER);
 #endif
 
+	// Catches default focused option
+	lv_obj_t* dummy = lv_obj_create(actions_container, NULL);
+	lv_obj_set_width(dummy, 0);
+	lv_obj_set_height(dummy, 0);
+	lv_obj_set_style(dummy, &lv_style_transp_fit);
+
 	window_t* window = calloc(1, sizeof(window_t));
 	window->container = container;
 	window->scr = scr;
@@ -136,15 +150,13 @@ void finalize_window(window_t* window)
 {
 	// Resizes the main element.
 	// LVGL at the current release segfaults trying to LV_FIT_FILL in this situation.
-	// XXX: get actual window->container padding
-	int padding = POINTS_SCALE(10);
 	lv_obj_set_height(
 		window->main_container,
 		(
 		lv_obj_get_height_fit(window->scr)
 		- lv_obj_get_height(window->actions_container)
 		- lv_obj_get_height(window->top_container)
-		- 5 * padding
+		- 3 * PIXEL_SCALE(20)
 		)
 	);
 }
@@ -178,7 +190,7 @@ window_t* tbgui_main_window_init(void)
 	add_button(
 		window->actions_container,
 		APP_ACTION_POWEROFF,
-		"Power-Off the device"
+		"Power off the device"
 	);
 
 	finalize_window(window);
@@ -245,6 +257,22 @@ void font_init()
 	}
 }
 
+void present_window(window_t* window)
+{
+	current_window = window;
+	lv_scr_load(window->scr);
+
+	lv_group_t* group = lvgui_get_focus_group();
+	lv_group_remove_all_objs(group);
+
+	lv_obj_t * child;
+	child = lv_obj_get_child_back(window->actions_container, NULL);
+	while(child) {
+		lv_group_add_obj(group, child);
+		child = lv_obj_get_child_back(window->actions_container, child);
+	}
+}
+
 int main()
 {
 #if USE_MONITOR
@@ -275,7 +303,7 @@ int main()
 	lv_theme_t * th = lv_theme_tb_init(NULL, NULL);
 	lv_theme_set_current(th);
 
-	current_window = tbgui_main_window_init();
+	present_window(tbgui_main_window_init());
 
 	while (true) {
 		lv_task_handler();
