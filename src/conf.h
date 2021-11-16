@@ -1,4 +1,5 @@
 #ifndef TBGUI_CONF_H
+#define TBGUI_CONF_H
 
 #include <lvgl/lvgl.h>
 #include <lv_drv_conf.h>
