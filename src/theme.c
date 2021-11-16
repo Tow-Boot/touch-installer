@@ -159,12 +159,12 @@ static void btn_init(void)
     rel.body.padding.inner  = VER_GRID;
 
     rel.body.border.width   = PIXEL_SCALE(5);
-    rel.body.border.color   = lv_color_hex(0x007ADB);
+    rel.body.border.color   = lv_color_hex(0x004D90);
     rel.body.border.opa     = LV_OPA_COVER;
 
     rel.body.shadow.color   = DEF_SHADOW_COLOR;
     rel.body.shadow.type    = LV_SHADOW_BOTTOM;
-    rel.body.shadow.width   = PIXEL_SCALE(8);
+    rel.body.shadow.width   = PIXEL_SCALE(10);
 
     rel.text.color          = DEF_COLOR_TEXT;
     rel.image.color         = DEF_COLOR_TEXT;
