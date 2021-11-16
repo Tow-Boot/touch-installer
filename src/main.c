@@ -97,13 +97,13 @@ lv_obj_t* add_container(lv_obj_t* parent, bool transp)
  */
 window_t* create_window(char* title_text)
 {
-    lv_obj_t * scr = lv_page_create(NULL, NULL);
+    lv_obj_t * scr = lv_cont_create(NULL, NULL);
     lv_disp_load_scr(scr);
 	
 	lv_obj_t * container = lv_cont_create(scr, NULL);
 	lv_cont_set_layout(container, LV_LAYOUT_COL_M);
 	lv_cont_set_fit2(container, LV_FIT_FLOOD, LV_FIT_FLOOD);
-	lv_cont_set_style(container, LV_CONT_STYLE_MAIN, &lv_style_transp_fit);
+	lv_cont_set_style(container, LV_CONT_STYLE_MAIN, &lv_style_transp);
 	
 	lv_obj_t * top_container = add_container(container, true);
 	lv_obj_t * main_container = add_container(container, true);
@@ -149,7 +149,6 @@ window_t* create_window(char* title_text)
 void finalize_window(window_t* window)
 {
 	// Resizes the main element.
-	// LVGL at the current release segfaults trying to LV_FIT_FILL in this situation.
 	lv_obj_set_height(
 		window->main_container,
 		(
