@@ -1,5 +1,5 @@
-#ifndef TBGUI_ACTIONS_H
-#define TBGUI_ACTIONS_H
+#ifndef TBGUI_APP_ACTIONS_H
+#define TBGUI_APP_ACTIONS_H
 
 enum app_actions {
 	APP_ACTION_NONE,
@@ -12,5 +12,7 @@ enum app_actions {
 	_APP_ACTIONS_COUNT,
 };
 typedef enum app_actions app_actions_t;
+
+void handle_app_actions();
 
 #endif

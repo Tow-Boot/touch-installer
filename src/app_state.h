@@ -1,7 +1,7 @@
 #ifndef TBGUI_APP_STATE_H
 #define TBGUI_APP_STATE_H
 
-#include "tbgui_actions.h"
+#include "app_actions.h"
 
 typedef struct app_state {
 	app_actions_t action;

@@ -1,7 +1,7 @@
 #ifndef TBGUI_PARTS_H
 #define TBGUI_PARTS_H
 
-#include "tbgui_actions.h"
+#include "app_actions.h"
 
 struct window;
 typedef struct window window_t;
