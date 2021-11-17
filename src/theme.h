@@ -8,6 +8,11 @@
 
 #define LV_USE_THEME_TB 1
 
+
+#define THEME_HUE_RED     4
+#define THEME_HUE_GREEN 120
+#define THEME_HUE_BLUE  212
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -23,7 +28,7 @@ extern "C" {
 
 #if LV_USE_THEME_TB
 
-lv_theme_t * lv_theme_tb_init(lv_font_t * font, lv_font_t * button_font);
+lv_theme_t * lv_theme_tb_init(int hue, lv_font_t * font, lv_font_t * button_font);
 lv_theme_t * lv_theme_get_tb(void);
 
 #endif

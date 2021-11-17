@@ -26,32 +26,9 @@
 #define HOR_GRID PIXEL_SCALE(32)
 #define VER_GRID PIXEL_SCALE(41/2) // 20.5
 
-#define    COLOR_WHITE        lv_color_hex(0xffffff)
-#define    COLOR_BLACK        lv_color_hex(0x000000)
-#define    COLOR_NOT_BLACK    lv_color_hex(0x3A3A3A)
-#define    COLOR_BLUE_DARKER  lv_color_hex(0x004072)
-#define    COLOR_BLUE_DARK2   lv_color_hex(0x405D99)
-#define    COLOR_BLUE_DARK    lv_color_hex(0x005190)
-#define    COLOR_BLUE         lv_color_hex(0x0063B1)
-#define    COLOR_BLUE_LIGHT   lv_color_hex(0x37A1F4)
-#define    COLOR_BLUE_LIGHTER lv_color_hex(0xB2DDFF)
-#define    COLOR_GREEN        lv_color_hex(0x2ABA38)
-#define    COLOR_GRAY_DARK    lv_color_hex(0x6A6A6A)
-#define    COLOR_GRAY_LIGHT   lv_color_hex(0xD8D8D8)
-#define    COLOR_GRAY_LIGHTER lv_color_hex(0xF4F4F4)
-#define    COLOR_YELLOW       lv_color_hex(0xFFFECA)
-#define    COLOR_ORANGE_DARK  lv_color_hex(0xFF8657)
-#define    COLOR_ORANGE       lv_color_hex(0xFFAB0D)
-#define    COLOR_ORANGE_LIGHT lv_color_hex(0xFFF5E1)
-
-#define BASE_HUE 206
-#define BUTTON_HUE 206
-
-#define DEF_COLOR_TEXT COLOR_WHITE
+#define DEF_COLOR_TEXT lv_color_hex(0xFFFFFF)
 #define DEF_COLOR_TEXT_SECONDARY lv_color_hex(0xDDDDDD)
-
-// This shadow color is cheating... a lot...
-#define    DEF_SHADOW_COLOR   lv_color_hex(0x000000)
+#define DEF_SHADOW_COLOR   lv_color_hex(0x000000)
 
 /**********************
  *      TYPEDEFS
@@ -93,7 +70,7 @@ static void basic_init(void)
     def.text.color  = DEF_COLOR_TEXT;
 
     lv_style_copy(&bg, &def);
-    bg.body.main_color = COLOR_BLUE_DARKER;
+    bg.body.main_color = lv_color_hsv_to_rgb(_hue, 100, 45);
     bg.body.grad_color = bg.body.main_color;
     bg.body.radius     = 0;
 
@@ -105,8 +82,8 @@ static void basic_init(void)
 
     lv_style_copy(&panel, &def);
     panel.body.radius         = DEF_RADIUS;
-    panel.body.main_color     = COLOR_BLUE_DARKER;
-    panel.body.grad_color     = COLOR_BLUE_DARKER;
+    panel.body.main_color     = lv_color_hsv_to_rgb(_hue, 100, 45);
+    panel.body.grad_color     = lv_color_hsv_to_rgb(_hue, 100, 45);
     panel.body.border.width   = PIXEL_SCALE(1);
     panel.body.border.color   = lv_color_hex3(0x000);
     panel.body.border.opa     = LV_OPA_COVER;
@@ -149,7 +126,7 @@ static void btn_init(void)
 
     lv_style_copy(&rel, &def);
     rel.text.font           = _button_font;
-    rel.body.main_color     = COLOR_BLUE;
+    rel.body.main_color     = lv_color_hsv_to_rgb(_hue, 100, 69);
     rel.body.grad_color     = rel.body.main_color;
     rel.body.radius         = PIXEL_SCALE(6);
     rel.body.padding.left   = COL_PADDING;
@@ -159,7 +136,7 @@ static void btn_init(void)
     rel.body.padding.inner  = VER_GRID;
 
     rel.body.border.width   = PIXEL_SCALE(5);
-    rel.body.border.color   = lv_color_hex(0x004D90);
+    rel.body.border.color   = lv_color_hsv_to_rgb(_hue, 100, 56);
     rel.body.border.opa     = LV_OPA_COVER;
 
     rel.body.shadow.color   = DEF_SHADOW_COLOR;
@@ -170,17 +147,17 @@ static void btn_init(void)
     rel.image.color         = DEF_COLOR_TEXT;
 
     lv_style_copy(&pr, &rel);
-    pr.body.main_color   = COLOR_BLUE_DARK;
+    pr.body.main_color   = lv_color_hsv_to_rgb(_hue, 100, 56);
     pr.body.grad_color   = pr.body.main_color;
     pr.body.shadow.width = PIXEL_SCALE(4);
 
     lv_style_copy(&tgl_rel, &rel);
-    tgl_rel.body.main_color   = COLOR_BLUE_DARK;
+    tgl_rel.body.main_color   = lv_color_hsv_to_rgb(_hue, 100, 56);
     tgl_rel.body.grad_color   = tgl_rel.body.main_color;
     tgl_rel.body.shadow.width = PIXEL_SCALE(4);
 
     lv_style_copy(&tgl_pr, &tgl_rel);
-    tgl_pr.body.main_color   = COLOR_BLUE_DARK;
+    tgl_pr.body.main_color   = lv_color_hsv_to_rgb(_hue, 100, 56);
     tgl_pr.body.grad_color   = tgl_pr.body.main_color;
     tgl_pr.body.shadow.width = PIXEL_SCALE(2);
 
@@ -188,8 +165,8 @@ static void btn_init(void)
     ina.body.main_color   = lv_color_hex3(0xccc);
     ina.body.grad_color   = ina.body.main_color;
     ina.body.shadow.width = 0;
-    ina.text.color        = lv_color_hsv_to_rgb(BUTTON_HUE, 95, 5);
-    ina.image.color       = lv_color_hsv_to_rgb(BUTTON_HUE, 95, 5);
+    ina.text.color        = lv_color_hsv_to_rgb(_hue, 95, 5);
+    ina.image.color       = lv_color_hsv_to_rgb(_hue, 95, 5);
 
     theme.style.btn.rel     = &rel;
     theme.style.btn.pr      = &pr;
@@ -251,7 +228,7 @@ static void bar_init(void)
     static lv_style_t bar_bg, bar_indic;
 
     lv_style_copy(&bar_bg, &def);
-    bar_bg.body.main_color     = COLOR_BLUE_DARKER;
+    bar_bg.body.main_color     = lv_color_hsv_to_rgb(_hue, 100, 45);
     bar_bg.body.grad_color     = bar_bg.body.main_color;
     bar_bg.body.radius         = PIXEL_SCALE(8);
     bar_bg.body.border.width   = PIXEL_SCALE(4);
@@ -259,11 +236,11 @@ static void bar_init(void)
     bar_bg.body.padding.right  = LV_DPI / 16;
     bar_bg.body.padding.top    = LV_DPI / 16;
     bar_bg.body.padding.bottom = LV_DPI / 16;
-    bar_bg.body.border.color = COLOR_BLUE_LIGHT;
+    bar_bg.body.border.color = lv_color_hsv_to_rgb(_hue, 77, 96);
     bar_bg.body.border.opa   = LV_OPA_COVER;
 
     lv_style_copy(&bar_indic, &bar_bg);
-    bar_indic.body.main_color     = COLOR_BLUE_LIGHT;
+    bar_indic.body.main_color     = lv_color_hsv_to_rgb(_hue, 77, 96);
     bar_indic.body.grad_color     = bar_indic.body.main_color;
     bar_indic.body.border.width   = 0;
     bar_indic.body.padding.left   = 0;
@@ -308,14 +285,14 @@ static void sw_init(void)
     sw_knob_on.body.shadow.width = PIXEL_SCALE(3);
     sw_knob_on.body.shadow.type  = LV_SHADOW_BOTTOM;
     sw_knob_on.body.shadow.color = DEF_SHADOW_COLOR;
-    sw_knob_on.body.main_color   = COLOR_BLUE_LIGHT;
+    sw_knob_on.body.main_color   = lv_color_hsv_to_rgb(_hue, 77, 96);
     sw_knob_on.body.grad_color   = sw_knob_on.body.main_color;
-    sw_knob_on.body.border.color = COLOR_BLUE_DARK;
+    sw_knob_on.body.border.color = lv_color_hsv_to_rgb(_hue, 100, 56);
     sw_knob_on.body.border.opa   = LV_OPA_COVER;
 
     lv_style_copy(&sw_knob_off, &sw_knob_on);
-    sw_knob_off.body.main_color   = COLOR_BLUE_DARK;
-    sw_knob_off.body.border.color = COLOR_BLUE_DARK2;
+    sw_knob_off.body.main_color   = lv_color_hsv_to_rgb(_hue, 100, 56);
+    sw_knob_off.body.border.color = lv_color_hsv_to_rgb(_hue + 14, 58, 60);
     sw_knob_off.body.grad_color   = sw_knob_off.body.main_color;
 
     theme.style.sw.bg       = &sw_bg;
@@ -650,7 +627,7 @@ static void style_mod(lv_group_t * group, lv_style_t * style)
     uint16_t hue2 = (_hue + 60) % 360;
 
     style->body.border.opa   = LV_OPA_COVER;
-    style->body.border.color = COLOR_ORANGE;
+    style->body.border.color = lv_color_hex(0xFFAB0D);
 
     // If not empty or has border then emphasis the border
     if (style->body.opa != LV_OPA_TRANSP || style->body.border.width != 0) {
@@ -694,12 +671,12 @@ static void style_mod_edit(lv_group_t * group, lv_style_t * style)
  * @param font pointer to a font (NULL to use the default)
  * @return pointer to the initialized theme
  */
-lv_theme_t * lv_theme_tb_init(lv_font_t * font, lv_font_t * button_font)
+lv_theme_t * lv_theme_tb_init(int hue, lv_font_t * font, lv_font_t * button_font)
 {
     if(font == NULL) font = LV_FONT_DEFAULT;
     if(button_font == NULL) button_font = LV_FONT_DEFAULT;
 
-    _hue  = BASE_HUE; // Start at the right hue.
+    _hue  = hue;
     _font = font;
     _button_font = button_font;
 
