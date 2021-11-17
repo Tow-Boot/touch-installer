@@ -8,8 +8,6 @@
 #include <hal.h>
 #include <scale.h>
 
-extern void btn_event_cb(lv_obj_t * btn, lv_event_t event);
-
 lv_obj_t* add_button(lv_obj_t* parent, app_actions_t action, char* label_text)
 {
     lv_obj_t * btn = lv_btn_create(parent, NULL);
@@ -114,4 +112,45 @@ void finalize_window(window_t* window)
 		- 3 * PIXEL_SCALE(20)
 		)
 	);
+}
+
+/**
+ * Changes the `current_window` ref, and presents the window.
+ * When presenting, it resets the focus group to the new window actions.
+ */
+void present_window(window_t* window)
+{
+	current_window = window;
+	lv_scr_load(window->scr);
+
+	lv_group_t* group = lvgui_get_focus_group();
+	lv_group_remove_all_objs(group);
+
+	lv_obj_t * child;
+	child = lv_obj_get_child_back(window->actions_container, NULL);
+	while(child) {
+		lv_group_add_obj(group, child);
+		child = lv_obj_get_child_back(window->actions_container, child);
+	}
+
+	if (window->on_present != NULL) {
+		window->on_present(window);
+	}
+}
+
+void btn_enable_state(lv_obj_t* btn, bool enabled)
+{
+	lv_obj_set_click(btn, enabled);
+	lv_obj_set_opa_scale_enable(btn, true);
+	lv_obj_set_opa_scale(btn, (enabled ? LV_OPA_MAX : LV_OPA_50));
+}
+
+void enable_disable_actions(window_t* window, bool enabled)
+{
+	lv_obj_t * child;
+	child = lv_obj_get_child_back(window->actions_container, NULL);
+	while (child) {
+		btn_enable_state(child, enabled);
+		child = lv_obj_get_child_back(window->actions_container, child);
+	}
 }
