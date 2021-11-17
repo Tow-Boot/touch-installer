@@ -112,5 +112,6 @@ void handle_install(window_t* window)
 		"\nYou can safely power off the " DEVICE_NAME " and remove the installation media."
 	);
 
+	tbgui_theme_success();
 	btn_enable_state(private->back_button, true);
 }
