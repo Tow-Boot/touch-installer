@@ -8,6 +8,8 @@
 #include "app_state.h"
 #include "window_erase.h"
 
+#define LOG_BUF_SIZE (1024 * 1024)
+
 void tbgui_erase_window_on_present(window_t* window);
 
 typedef struct erase_window_priv {
@@ -85,8 +87,38 @@ void handle_erase(window_t* window)
 	usleep(SECOND_AS_MICROSECONDS * FRAME_RATE);
 	lv_task_handler();
 
-	// DO CHECKS HERE
-	usleep(SECOND_AS_MICROSECONDS);
+	int ret = 0;
+#ifdef LVGL_ENV_SIMULATOR
+	ret = system("echo 'Fake failure for simulator' > /tmp/tow-boot.log; sleep 1; false");
+#else
+	ret = system("echo 'TODO: implement checks' > /tmp/tow-boot.log; sleep 1; false");
+#endif
+
+	if (ret) {
+		char* log = calloc(LOG_BUF_SIZE, sizeof(char));
+		int res = 0;
+
+		FILE * f = fopen("/tmp/tow-boot.log", "r");
+		// Read exactly one LOG_BUF_SIZE buffer out of the file.
+		// It's not expected to be lengthy anyway.
+		res = fread(log, 1, LOG_BUF_SIZE, f);
+		(void)res; // unused
+		fclose(f);
+
+		lv_label_set_text_fmt(
+			private->progress_label,
+			"Checks failed... [ret = %d]\nNothing was done.\n\nDetails:\n%s",
+			ret >> 8,
+			log
+		);
+
+		free(log);
+
+		tbgui_theme_failure();
+		btn_enable_state(private->back_button, true);
+
+		return;
+	}
 
 	int i = 1;
 	while (i <= 100) {
