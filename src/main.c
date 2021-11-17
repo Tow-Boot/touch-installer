@@ -14,19 +14,13 @@
 #include "tbgui_parts.h"
 #include "windows.h"
 
-////////////////////////////////////////
-// Globals                            //
-////////////////////////////////////////
-
 #if USE_MONITOR
 extern int monitor_height;
 extern int monitor_width;
 #endif
 
+// Define `app` once.
 app_state_t* app;
-
-////////////////////////////////////////
-// Initialization {{{
 
 void font_init()
 {
@@ -76,9 +70,6 @@ void tbgui_app_init()
 	lv_theme_t * th = lv_theme_tb_init(NULL, NULL);
 	lv_theme_set_current(th);
 }
-
-// }}}
-////////////////////////////////////////
 
 int main()
 {
