@@ -31,6 +31,8 @@ void present_window(window_t* window);
 void btn_enable_state(lv_obj_t* btn, bool enabled);
 void enable_disable_actions(window_t* window, bool enabled);
 void btn_event_cb(lv_obj_t * btn, lv_event_t event);
-
+void tbgui_theme_default();
+void tbgui_theme_success();
+void tbgui_theme_failure();
 
 #endif

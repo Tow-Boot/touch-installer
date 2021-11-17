@@ -6,6 +6,7 @@
 #include "conf.h"
 #include "tbgui_parts.h"
 #include "app_state.h"
+#include "theme.h"
 #include <hal.h>
 #include <scale.h>
 
@@ -121,6 +122,7 @@ void finalize_window(window_t* window)
  */
 void present_window(window_t* window)
 {
+	tbgui_theme_default();
 	current_window = window;
 	lv_scr_load(window->scr);
 
@@ -165,4 +167,19 @@ void btn_event_cb(lv_obj_t * btn, lv_event_t event)
 		app_actions_t action = (app_actions_t)lv_obj_get_user_data(btn);
 		app->action = action;
 	}
+}
+
+void tbgui_theme_default()
+{
+	lv_theme_set_current(lv_theme_tb_init(THEME_HUE_BLUE, NULL, NULL));
+}
+
+void tbgui_theme_success()
+{
+	lv_theme_set_current(lv_theme_tb_init(THEME_HUE_GREEN, NULL, NULL));
+}
+
+void tbgui_theme_failure()
+{
+	lv_theme_set_current(lv_theme_tb_init(THEME_HUE_RED, NULL, NULL));
 }

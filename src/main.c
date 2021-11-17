@@ -64,9 +64,7 @@ void tbgui_app_init()
 	font_init();
 	lv_nanosvg_init();
 	lv_anim_core_init();
-
-	lv_theme_t * th = lv_theme_tb_init(NULL, NULL);
-	lv_theme_set_current(th);
+	tbgui_theme_default();
 }
 
 int main()
