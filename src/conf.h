@@ -15,6 +15,14 @@
 #	define TBGUI_INSTALL_TO_EMMC 0
 #endif
 
+#ifdef LVGL_ENV_SIMULATOR
+#define DEVICE_NAME "Simulator"
+#endif
+
+#ifndef DEVICE_NAME
+#error DEVICE_NAME must be defined
+#endif
+
 #ifndef LVGL_ENV_SIMULATOR
 #	if TBGUI_INSTALL_TO_SPI
 #	define INSTALL_LOCATION "SPI Flash"
@@ -24,7 +32,7 @@
 #	error TBGUI_INSTALL_TO_XXX not given
 #	endif
 #else
-#	define INSTALL_LOCATION "<simulator>"
+#	define INSTALL_LOCATION "simulated storage"
 #endif
 
 #define FRAME_RATE 1 / 60

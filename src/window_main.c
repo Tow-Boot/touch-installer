@@ -12,12 +12,14 @@ window_t* tbgui_main_window_init(void)
 {
 	window_t* window = create_window("Tow-Boot " INSTALL_LOCATION " installer");
 
-    lv_obj_t * description_label = lv_label_create(window->main_container, NULL);
+	lv_obj_t * description_label = lv_label_create(window->main_container, NULL);
 	lv_label_set_long_mode(description_label, LV_LABEL_LONG_BREAK);
-    lv_obj_set_width(description_label, lv_obj_get_width_fit(window->main_container));
-    lv_label_set_text(
+	lv_obj_set_width(description_label, lv_obj_get_width_fit(window->main_container));
+	lv_label_set_text(
 		description_label,
-		"\nThis application is used to manage the Tow-Boot installation on " INSTALL_LOCATION ".\n\nUse one of the following options.\n"
+		"\nThis application is used to manage the Tow-Boot installation on your " DEVICE_NAME ".\n"
+		"\nTow-Boot will be installed on " INSTALL_LOCATION ".\n"
+		"\nUse one of the following options.\n"
 	);
 
 	// Buttons

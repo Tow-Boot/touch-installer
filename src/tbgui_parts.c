@@ -11,12 +11,12 @@
 
 lv_obj_t* add_button(lv_obj_t* parent, app_actions_t action, char* label_text)
 {
-    lv_obj_t * btn = lv_btn_create(parent, NULL);
-    lv_obj_set_event_cb(btn, btn_event_cb);
+	lv_obj_t * btn = lv_btn_create(parent, NULL);
+	lv_obj_set_event_cb(btn, btn_event_cb);
 	lv_btn_set_fit2(btn, LV_FIT_FLOOD, LV_FIT_TIGHT);
 	lv_obj_set_user_data(btn, (void*)action);
-    lv_obj_t * label = lv_label_create(btn, NULL);
-    lv_label_set_text(label, label_text);
+	lv_obj_t * label = lv_label_create(btn, NULL);
+	lv_label_set_text(label, label_text);
 
 	return btn;
 }
@@ -52,8 +52,8 @@ lv_obj_t* add_container(lv_obj_t* parent, bool transp)
  */
 window_t* create_window(char* title_text)
 {
-    lv_obj_t * scr = lv_cont_create(NULL, NULL);
-    lv_disp_load_scr(scr);
+	lv_obj_t * scr = lv_cont_create(NULL, NULL);
+	lv_disp_load_scr(scr);
 	
 	lv_obj_t * container = lv_cont_create(scr, NULL);
 	lv_cont_set_layout(container, LV_LAYOUT_COL_M);
@@ -77,8 +77,8 @@ window_t* create_window(char* title_text)
 	free(logo_path);
 
 #if 0
-    lv_obj_t * title = lv_label_create(top_container, NULL);
-    lv_label_set_text(title, title_text);
+	lv_obj_t * title = lv_label_create(top_container, NULL);
+	lv_label_set_text(title, title_text);
 	lv_label_set_align(title, LV_LABEL_ALIGN_CENTER);
 #endif
 
@@ -158,8 +158,11 @@ void enable_disable_actions(window_t* window, bool enabled)
 
 void btn_event_cb(lv_obj_t * btn, lv_event_t event)
 {
-    if (event == LV_EVENT_RELEASED) {
+	if (!lv_obj_get_click(btn)) {
+		return;
+	}
+	if (event == LV_EVENT_RELEASED) {
 		app_actions_t action = (app_actions_t)lv_obj_get_user_data(btn);
 		app->action = action;
-    }
+	}
 }

@@ -18,7 +18,7 @@ struct window {
 
 	// Pointer to stash useful things for the window's own internal use.
 	// Ugh... I don't like C :/
-	void* private_use;
+	void* private;
 };
 
 window_t* current_window;

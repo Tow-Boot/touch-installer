@@ -25,13 +25,17 @@ void handle_app_actions()
 				present_window(app->erase_window);
 				break;
 			case APP_ACTION_POWEROFF:
+				{
+				int res = 0;
 #ifdef LVGL_ENV_SIMULATOR
+				// (Using system to improve soak test implementation...)
+				res = system("true");
 				exit(0);
 #else
-				int res = 0;
 				res = system("poweroff");
-				(void)res;
 #endif
+				(void)res;
+				}
 				break;
 			case APP_ACTION_DO_ERASE:
 				handle_erase(app->erase_window);
