@@ -30,10 +30,6 @@ void finalize_window(window_t* window);
 void present_window(window_t* window);
 void btn_enable_state(lv_obj_t* btn, bool enabled);
 void enable_disable_actions(window_t* window, bool enabled);
-
-/**
- * Declared here, defind by the app.
- */
 void btn_event_cb(lv_obj_t * btn, lv_event_t event);
 
 

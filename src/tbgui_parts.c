@@ -5,6 +5,7 @@
 
 #include "conf.h"
 #include "tbgui_parts.h"
+#include "app_state.h"
 #include <hal.h>
 #include <scale.h>
 
@@ -153,4 +154,12 @@ void enable_disable_actions(window_t* window, bool enabled)
 		btn_enable_state(child, enabled);
 		child = lv_obj_get_child_back(window->actions_container, child);
 	}
+}
+
+void btn_event_cb(lv_obj_t * btn, lv_event_t event)
+{
+    if (event == LV_EVENT_RELEASED) {
+		app_actions_t action = (app_actions_t)lv_obj_get_user_data(btn);
+		app->action = action;
+    }
 }
