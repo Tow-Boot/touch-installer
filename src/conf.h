@@ -4,6 +4,10 @@
 #include <lvgl/lvgl.h>
 #include <lv_drv_conf.h>
 
+#ifndef TBGUI_CHECK_LOG_LOCATION
+#	define TBGUI_CHECK_LOG_LOCATION "/tmp/tow-boot-check.log"
+#endif
+
 #ifndef TBGUI_ASSETS_PATH
 #	define TBGUI_ASSETS_PATH "./"
 #endif
