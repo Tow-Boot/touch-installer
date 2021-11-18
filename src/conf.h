@@ -20,6 +20,14 @@
 #endif
 
 #ifdef LVGL_ENV_SIMULATOR
+#define TARGET_BLOCK_DEVICE "/tmp/fake-device.tmp"
+#endif
+
+#ifndef TARGET_BLOCK_DEVICE
+#error TARGET_BLOCK_DEVICE must be defined
+#endif
+
+#ifdef LVGL_ENV_SIMULATOR
 #define DEVICE_NAME "Simulator"
 #endif
 
