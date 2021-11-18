@@ -4,11 +4,20 @@
 #include <linux/limits.h>
 
 #include "conf.h"
+#include <hal.h>
 #include "tbgui_parts.h"
 #include "app_state.h"
 #include "window_install.h"
+#include "utils.h"
+
+#define LOG_BUF_SIZE (1024 * 1024)
+#define BAR_SEGMENTS 1024
 
 void tbgui_install_window_on_present(window_t* window);
+
+#ifdef LVGL_ENV_SIMULATOR
+static int fake_failure = 0;
+#endif
 
 typedef struct install_window_priv {
 	lv_obj_t* back_button;
@@ -23,6 +32,7 @@ window_t* tbgui_install_window_init(void)
 
 	lv_obj_t* bar = lv_bar_create(window->main_container, NULL);
 	lv_obj_set_width(bar, lv_obj_get_width_fit(window->main_container));
+	lv_bar_set_range(bar, 0, BAR_SEGMENTS);
 	lv_bar_set_value(bar, 0, LV_ANIM_OFF);
 	private->progress_bar = bar;
 
@@ -68,16 +78,32 @@ void tbgui_install_window_on_present(window_t* window)
 	enable_disable_actions(window, true);
 }
 
+static void write_data_callback(void* window, int bytes_written, int total_bytes)
+{
+	install_window_priv_t* private = ((window_t*)window)->private;
+	uint64_t progress = bytes_written;
+	progress *= BAR_SEGMENTS;
+	progress /= total_bytes;
+
+	lv_bar_set_value(
+		private->progress_bar,
+		progress,
+		LV_ANIM_OFF
+	);
+	lv_label_set_text_fmt(
+		private->progress_label,
+		"Bytes written:\n%d/%d",
+		bytes_written,
+		total_bytes
+	);
+	lv_task_handler();
+}
+
 void handle_install(window_t* window)
 {
 	install_window_priv_t* private = window->private;
 
 	enable_disable_actions(window, false);
-
-	lv_obj_t* bar = private->progress_bar;
-
-	// TODO: dynamically detect number of chunks we write.
-	lv_bar_set_range(bar, 0, 100);
 
 	lv_label_set_text(
 		private->progress_label,
@@ -86,24 +112,59 @@ void handle_install(window_t* window)
 	usleep(SECOND_AS_MICROSECONDS * FRAME_RATE);
 	lv_task_handler();
 
-	// DO CHECKS HERE
-	usleep(SECOND_AS_MICROSECONDS);
+	int ret = 0;
+#ifdef LVGL_ENV_SIMULATOR
+	if (fake_failure == 1) {
+		ret = system("echo 'Fake installer checks fail for simulator' > " TBGUI_CHECK_LOG_LOCATION "; sleep 1; false");
+		fake_failure = 0;
+	}
+	else {
+		ret = system("echo 'Fake success for simulator' > " TBGUI_CHECK_LOG_LOCATION "; sleep 1; true");
+		fake_failure = 1;
+	}
+#else
+	ret = system("tow-boot-installer--install-checks");
+#endif
 
-	int i = 1;
-	while (i <= 100) {
-		lv_bar_set_value(bar, i, LV_ANIM_OFF);
+	if (ret) {
+		char* log = calloc(LOG_BUF_SIZE, sizeof(char));
+		int res = 0;
+
+		FILE * f = fopen(TBGUI_CHECK_LOG_LOCATION, "r");
+		// Read exactly one LOG_BUF_SIZE buffer out of the file.
+		// It's not expected to be lengthy anyway.
+		res = fread(log, 1, LOG_BUF_SIZE, f);
+		(void)res; // unused
+		fclose(f);
+
 		lv_label_set_text_fmt(
 			private->progress_label,
-			"Wrote %d out of %d bytes...",
-			i,
-			100
+			"Checks failed... [ret = %d]\nNothing was done.\n\nDetails:\n%s",
+			ret >> 8,
+			log
 		);
-		lv_task_handler();
 
-		// DO WORK HERE...
-		usleep(SECOND_AS_MICROSECONDS * 0.01);
+		free(log);
 
-		i++;
+		tbgui_theme_failure();
+		btn_enable_state(private->back_button, true);
+
+		return;
+	}
+
+	ret = write_to_device(window, write_data_callback, hal_asset_path("temp.bin"), TARGET_BLOCK_DEVICE, 0);
+	if (ret != 0) {
+		lv_label_set_text_fmt(
+			private->progress_label,
+			"Unexpected failure! [ret = %d]\nSomething could have happened...\n\nDetails:\n%s",
+			ret,
+			strerror(ret)
+		);
+
+		tbgui_theme_failure();
+		btn_enable_state(private->back_button, true);
+
+		return;
 	}
 
 	lv_label_set_text(
