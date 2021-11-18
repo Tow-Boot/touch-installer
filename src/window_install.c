@@ -152,7 +152,7 @@ void handle_install(window_t* window)
 		return;
 	}
 
-	ret = write_to_device(window, write_data_callback, hal_asset_path("temp.bin"), TARGET_BLOCK_DEVICE, 0);
+	ret = write_to_device(window, write_data_callback, TOW_BOOT_SOURCE_FILE, TARGET_BLOCK_DEVICE, 0);
 	if (ret != 0) {
 		lv_label_set_text_fmt(
 			private->progress_label,

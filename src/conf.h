@@ -21,10 +21,15 @@
 
 #ifdef LVGL_ENV_SIMULATOR
 #define TARGET_BLOCK_DEVICE "/tmp/fake-device.tmp"
+#define TOW_BOOT_SOURCE_FILE hal_asset_path("temp.bin")
 #endif
 
 #ifndef TARGET_BLOCK_DEVICE
 #error TARGET_BLOCK_DEVICE must be defined
+#endif
+
+#ifndef TOW_BOOT_SOURCE_FILE
+#error TOW_BOOT_SOURCE_FILE must be defined
 #endif
 
 #ifdef LVGL_ENV_SIMULATOR
