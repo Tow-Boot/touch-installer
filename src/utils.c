@@ -2,6 +2,8 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/ioctl.h>
+#include <linux/fs.h>
 
 #include <unistd.h>
 #include "conf.h"
@@ -54,4 +56,22 @@ int write_to_device(void* userdata, write_callback_function_t* cb, char* from_pa
 	}
 
 	return 0;
+}
+
+uint64_t get_block_device_size(char* path)
+{
+	uint64_t size;
+
+	int f = open(path, O_RDONLY);
+	if (f == -1) {
+		fprintf(stderr, "ERROR: Opening “%s” failed, (%m)\n", path);
+		exit(2);
+	}
+
+	if (ioctl(f, BLKGETSIZE64, &size) == -1) {
+		fprintf(stderr, "ERROR: Running ioctl against “%s” failed, (%m)\n", path);
+		exit(2);
+	}
+
+	return size;
 }
