@@ -17,9 +17,12 @@ window_t* tbgui_main_window_init(void)
 	lv_obj_set_width(description_label, lv_obj_get_width_fit(window->main_container));
 	lv_label_set_text(
 		description_label,
-		"\nThis application is used to manage the Tow-Boot installation on your " DEVICE_NAME ".\n"
+		"This application is used to manage the Tow-Boot installation on your " DEVICE_NAME ".\n"
 		"\nTow-Boot will be installed on " INSTALL_LOCATION ".\n"
-		"\nUse one of the following options.\n"
+#if TBGUI_INSTALL_TO_EMMC == 1 || LVGL_ENV_SIMULATOR == 1
+		"\nInstalling to eMMC will ERASE the internal storage content.\n"
+#endif
+		"\nUse one of the following options."
 	);
 
 	// Buttons
@@ -44,8 +47,8 @@ window_t* tbgui_main_window_init(void)
 
 	finalize_window(window);
 
-	lv_cont_set_layout(window->main_container, LV_LAYOUT_OFF);
-	lv_obj_align(description_label, NULL, LV_ALIGN_CENTER, 0, 0);
+	//lv_cont_set_layout(window->main_container, LV_LAYOUT_OFF);
+	//lv_obj_align(description_label, NULL, LV_ALIGN_CENTER, 0, 0);
 
 	app->main_window = window;
 
