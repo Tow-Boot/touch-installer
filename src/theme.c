@@ -84,12 +84,12 @@ static void basic_init(void)
     panel.body.radius         = DEF_RADIUS;
     panel.body.main_color     = lv_color_hsv_to_rgb(_hue, 100, 45);
     panel.body.grad_color     = lv_color_hsv_to_rgb(_hue, 100, 45);
-    panel.body.border.width   = PIXEL_SCALE(1);
+    panel.body.border.width   = PIXEL_SCALE(0);
     panel.body.border.color   = lv_color_hex3(0x000);
     panel.body.border.opa     = LV_OPA_COVER;
     panel.body.shadow.color   = DEF_SHADOW_COLOR;
     panel.body.shadow.type    = LV_SHADOW_BOTTOM;
-    panel.body.shadow.width   = PIXEL_SCALE(4);
+    panel.body.shadow.width   = PIXEL_SCALE(0);
     panel.body.padding.left   = COL_PADDING;
     panel.body.padding.right  = COL_PADDING;
     panel.body.padding.top    = VER_GRID;
@@ -99,9 +99,10 @@ static void basic_init(void)
     panel.image.color         = DEF_COLOR_TEXT;
 
     lv_style_copy(&sb, &def);
-    sb.body.main_color     = LV_COLOR_BLACK;
-    sb.body.grad_color     = LV_COLOR_BLACK;
-    sb.body.opa            = LV_OPA_40;
+    sb.body.radius         = PIXEL_SCALE(4);
+    sb.body.main_color     = lv_color_hsv_to_rgb(_hue, 200, 100);
+    sb.body.grad_color     = sb.body.main_color;
+    sb.body.opa            = LV_OPA_60;
 
 	// ???
     sb.body.padding.right  = COL_PADDING;
