@@ -14,7 +14,7 @@
 
 void tbgui_erase_window_on_present(window_t* window);
 
-#ifdef LVGL_ENV_SIMULATOR
+#if LVGL_ENV_SIMULATOR == 1
 static int fake_failure = 0;
 #endif
 
@@ -111,7 +111,7 @@ void handle_erase(window_t* window)
 	lv_task_handler();
 
 	int ret = 0;
-#ifdef LVGL_ENV_SIMULATOR
+#if LVGL_ENV_SIMULATOR == 1
 	if (fake_failure == 1) {
 		ret = system("echo 'Fake installer checks fail for simulator' > " TBGUI_CHECK_LOG_LOCATION "; sleep 1; false");
 		fake_failure = 0;
@@ -150,7 +150,7 @@ void handle_erase(window_t* window)
 		return;
 	}
 
-#ifdef LVGL_ENV_SIMULATOR
+#if LVGL_ENV_SIMULATOR == 1
 	uint64_t length = 16 * 1024 * 1024;
 #else
 	uint64_t length = get_block_device_size(TARGET_BLOCK_DEVICE);

@@ -15,7 +15,7 @@
 
 void tbgui_install_window_on_present(window_t* window);
 
-#ifdef LVGL_ENV_SIMULATOR
+#if LVGL_ENV_SIMULATOR == 1
 static int fake_failure = 0;
 #endif
 
@@ -113,7 +113,7 @@ void handle_install(window_t* window)
 	lv_task_handler();
 
 	int ret = 0;
-#ifdef LVGL_ENV_SIMULATOR
+#if LVGL_ENV_SIMULATOR == 1
 	if (fake_failure == 1) {
 		ret = system("echo 'Fake installer checks fail for simulator' > " TBGUI_CHECK_LOG_LOCATION "; sleep 1; false");
 		fake_failure = 0;

@@ -27,7 +27,7 @@ void handle_app_actions()
 			case APP_ACTION_POWEROFF:
 				{
 				int res = 0;
-#ifdef LVGL_ENV_SIMULATOR
+#if LVGL_ENV_SIMULATOR == 1
 				// (Using system to improve soak test implementation...)
 				res = system("true");
 				exit(0);

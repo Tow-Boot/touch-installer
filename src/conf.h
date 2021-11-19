@@ -19,9 +19,10 @@
 #	define TBGUI_INSTALL_TO_EMMC 0
 #endif
 
-#ifdef LVGL_ENV_SIMULATOR
+#if LVGL_ENV_SIMULATOR == 1
 #define TARGET_BLOCK_DEVICE "/tmp/fake-device.tmp"
 #define TOW_BOOT_SOURCE_FILE hal_asset_path("temp.bin")
+#define DEVICE_NAME "Simulator"
 #endif
 
 #ifndef TARGET_BLOCK_DEVICE
@@ -32,15 +33,11 @@
 #error TOW_BOOT_SOURCE_FILE must be defined
 #endif
 
-#ifdef LVGL_ENV_SIMULATOR
-#define DEVICE_NAME "Simulator"
-#endif
-
 #ifndef DEVICE_NAME
 #error DEVICE_NAME must be defined
 #endif
 
-#ifndef LVGL_ENV_SIMULATOR
+#if LVGL_ENV_SIMULATOR == 0
 #	if TBGUI_INSTALL_TO_SPI
 #	define INSTALL_LOCATION "SPI Flash"
 #	elif TBGUI_INSTALL_TO_EMMC
