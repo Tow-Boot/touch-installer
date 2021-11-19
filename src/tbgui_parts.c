@@ -48,6 +48,33 @@ lv_obj_t* add_container(lv_obj_t* parent, bool transp)
 	return container;
 }
 
+lv_obj_t* add_page(lv_obj_t* parent, bool transp)
+{
+	static lv_style_t page_style;
+	static bool init_done = false;
+	if (!init_done) {
+		lv_style_copy(&page_style, &lv_style_transp);
+		page_style.body.padding.inner = PIXEL_SCALE(24);
+		init_done = true;
+	}
+
+	lv_obj_t * page = lv_page_create(parent, NULL);
+	lv_page_set_scrl_layout(page, LV_LAYOUT_COL_M);
+	lv_cont_set_fit2(page, LV_FIT_NONE, LV_FIT_TIGHT);
+
+	if (transp) {
+		lv_page_set_style(page, LV_PAGE_STYLE_BG, &page_style);
+	}
+	int width = lv_obj_get_width_fit(parent);
+	if (width > lv_obj_get_height_fit(parent)) {
+		//width = lv_obj_get_height_fit(parent);
+		width = lv_obj_get_height_fit(parent) * 9 / 16;
+	}
+	lv_obj_set_width(page, width);
+
+	return page;
+}
+
 /**
  * Provides a window structure to be filled.
  */
@@ -62,7 +89,7 @@ window_t* create_window(char* title_text)
 	lv_cont_set_style(container, LV_CONT_STYLE_MAIN, &lv_style_transp);
 	
 	lv_obj_t * top_container = add_container(container, true);
-	lv_obj_t * main_container = add_container(container, true);
+	lv_obj_t * main_container = add_page(container, true);
 	lv_cont_set_fit2(main_container, LV_FIT_NONE, LV_FIT_NONE);
 	lv_obj_t * actions_container = add_container(container, true);
 
@@ -92,7 +119,8 @@ window_t* create_window(char* title_text)
 	window_t* window = calloc(1, sizeof(window_t));
 	window->container = container;
 	window->scr = scr;
-	window->main_container = main_container;
+	window->main_container = lv_page_get_scrl(main_container);
+	window->main_page = main_container;
 	window->actions_container = actions_container;
 	window->top_container = top_container;
 
@@ -106,7 +134,7 @@ void finalize_window(window_t* window)
 {
 	// Resizes the main element.
 	lv_obj_set_height(
-		window->main_container,
+		window->main_page,
 		(
 		lv_obj_get_height_fit(window->scr)
 		- lv_obj_get_height(window->actions_container)

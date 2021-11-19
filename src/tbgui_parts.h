@@ -9,6 +9,7 @@ struct window {
 	lv_obj_t* container;
 	lv_obj_t* scr;
 	lv_obj_t* main_container;
+	lv_obj_t* main_page;
 	lv_obj_t* actions_container;
 	lv_obj_t* top_container;
 
