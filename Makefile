@@ -6,7 +6,7 @@ AR ?= ar
 LVGL_DIR ?= ${shell pwd}/lvgui
 PREFIX ?= /usr
 
-BINARY = tbgui
+BINARY = tow-boot-installer-gui
 VERSION = 0.0.1
 
 LVGL_ENV_SIMULATOR ?= 1
@@ -41,11 +41,11 @@ all: default
 
 default: $(BINARY)
     
-tbgui: $(AOBJS) $(COBJS) $(CONFFILES)
+$(BINARY): $(AOBJS) $(COBJS) $(CONFFILES)
 	$(CC) -o $@ -fPIC $(AOBJS) $(COBJS) $(LDFLAGS)
 
 clean: 
 	rm -f $(BINARY) $(AOBJS) $(COBJS)
 
 install:
-	install -vD $(BINARY) $(PREFIX)/bin
+	install -vDt $(PREFIX)/bin/ $(BINARY)
