@@ -8,10 +8,6 @@
 #	define TBGUI_CHECK_LOG_LOCATION "/tmp/tow-boot-check.log"
 #endif
 
-#ifndef TBGUI_ASSETS_PATH
-#	define TBGUI_ASSETS_PATH "./"
-#endif
-
 #ifndef TBGUI_INSTALL_TO_SPI
 #	define TBGUI_INSTALL_TO_SPI 0
 #endif
@@ -20,9 +16,14 @@
 #endif
 
 #if LVGL_ENV_SIMULATOR == 1
+#define TBGUI_ASSETS_PATH "./"
 #define TARGET_BLOCK_DEVICE "/tmp/fake-device.tmp"
 #define TOW_BOOT_SOURCE_FILE hal_asset_path("temp.bin")
 #define DEVICE_NAME "Simulator"
+#endif
+
+#ifndef TBGUI_ASSETS_PATH
+#error TBGUI_ASSETS_PATH must be defined
 #endif
 
 #ifndef TARGET_BLOCK_DEVICE
