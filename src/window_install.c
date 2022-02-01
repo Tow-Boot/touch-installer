@@ -74,7 +74,12 @@ void tbgui_install_window_on_present(window_t* window)
 {
 	install_window_priv_t* private = window->private;
 	lv_bar_set_value(private->progress_bar, 0, LV_ANIM_OFF);
-	lv_label_set_text(private->progress_label, "Use the “Start installation” button to start the installation.");
+	lv_label_set_text(
+		private->progress_label,
+		"Connect your device to a charger, just in case."
+		"\n\n"
+		"Use the “Start installation” button to start the installation."
+	);
 	enable_disable_actions(window, true);
 }
 
