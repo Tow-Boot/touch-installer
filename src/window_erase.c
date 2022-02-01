@@ -72,7 +72,12 @@ void tbgui_erase_window_on_present(window_t* window)
 {
 	erase_window_priv_t* private = window->private;
 	lv_bar_set_value(private->progress_bar, 0, LV_ANIM_OFF);
-	lv_label_set_text(private->progress_label, "Use the “Erase " INSTALL_LOCATION "” button to erase the platform firmware installation from the given media.");
+	lv_label_set_text(
+		private->progress_label,
+		"Use the “Erase " INSTALL_LOCATION "” button to erase the platform firmware installation from the given media."
+		"\n\nErasing the " INSTALL_LOCATION " is not necessary to install Tow-Boot."
+		"\n\nErasing the " INSTALL_LOCATION " may render this device temporarily unbootable."
+	);
 	enable_disable_actions(window, true);
 }
 
