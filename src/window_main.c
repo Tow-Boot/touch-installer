@@ -42,7 +42,7 @@ window_t* tbgui_main_window_init(void)
 	add_button(
 		window->actions_container,
 		APP_ACTION_POWEROFF,
-		"Power off the device"
+		"Power off"
 	);
 
 	finalize_window(window);
