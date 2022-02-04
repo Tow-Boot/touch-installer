@@ -13,7 +13,11 @@
 #define LOG_BUF_SIZE (1024 * 1024)
 #define BAR_SEGMENTS 1024
 
+// Size of the "head" of the firmware, to neuter.
+#define HEAD_SIZE 0x2000
+
 void tbgui_install_window_on_present(window_t* window);
+static int current_step = 0;
 
 #if LVGL_ENV_SIMULATOR == 1
 static int fake_failure = 0;
@@ -83,12 +87,35 @@ void tbgui_install_window_on_present(window_t* window)
 	enable_disable_actions(window, true);
 }
 
+static const char * step_name()
+{
+	switch (current_step) {
+		case 0:
+			return "Starting";
+			break;
+		case 1:
+			return "Hardening against failures...";
+			break;
+		case 2:
+			return "Writing new firmware tail...";
+			break;
+		case 3:
+			return "Writing new firmware head...";
+			break;
+	}
+	return "Unknown";
+}
+
 static void write_data_callback(void* window, int bytes_written, int total_bytes)
 {
 	install_window_priv_t* private = ((window_t*)window)->private;
 	uint64_t progress = bytes_written;
 	progress *= BAR_SEGMENTS;
 	progress /= total_bytes;
+
+#if LVGL_ENV_SIMULATOR == 1
+	usleep(50000);
+#endif
 
 	lv_bar_set_value(
 		private->progress_bar,
@@ -97,7 +124,9 @@ static void write_data_callback(void* window, int bytes_written, int total_bytes
 	);
 	lv_label_set_text_fmt(
 		private->progress_label,
-		"Bytes written:\n%d/%d",
+		"(%d) %s\nBytes written:\n%d/%d",
+		current_step,
+		step_name(),
 		bytes_written,
 		total_bytes
 	);
@@ -116,6 +145,9 @@ void handle_install(window_t* window)
 	);
 	usleep(SECOND_AS_MICROSECONDS * FRAME_RATE);
 	lv_task_handler();
+
+	// Reset steps counter
+	current_step = 0;
 
 	int ret = 0;
 #if LVGL_ENV_SIMULATOR == 1
@@ -157,11 +189,16 @@ void handle_install(window_t* window)
 		return;
 	}
 
-	ret = write_to_device(window, write_data_callback, TOW_BOOT_SOURCE_FILE, TARGET_BLOCK_DEVICE, 0, 0);
+	// Harden against failures
+	current_step = 1;
+	write_to_device(window, write_data_callback, "/dev/zero", TARGET_BLOCK_DEVICE, 0, HEAD_SIZE);
 	if (ret != 0) {
 		lv_label_set_text_fmt(
 			private->progress_label,
-			"Unexpected failure! [ret = %d]\nSomething could have happened...\n\nDetails:\n%s",
+			"[ret = %d]\n"
+			"Unexpected failure while neutering the firmware.\n"
+			"Rebooting may leave the device (temporarily) unbootable...\n\n"
+			"Details:\n%s",
 			ret,
 			strerror(ret)
 		);
@@ -171,6 +208,58 @@ void handle_install(window_t* window)
 
 		return;
 	}
+
+#if LVGL_ENV_SIMULATOR == 1
+	usleep(SECOND_AS_MICROSECONDS);
+#endif
+
+	// Write the firmware "tail"
+	current_step = 2;
+	ret = write_to_device(window, write_data_callback, TOW_BOOT_SOURCE_FILE, TARGET_BLOCK_DEVICE, HEAD_SIZE, 0);
+	if (ret != 0) {
+		lv_label_set_text_fmt(
+			private->progress_label,
+			"[ret = %d]\n"
+			"Unexpected failure while writing the tail of the firmware.\n"
+			"The platform firmware was neutered previously, rebooting should be safe.\n\n"
+			"Details:\n%s",
+			ret,
+			strerror(ret)
+		);
+
+		tbgui_theme_failure();
+		btn_enable_state(private->back_button, true);
+
+		return;
+	}
+
+#if LVGL_ENV_SIMULATOR == 1
+	usleep(SECOND_AS_MICROSECONDS);
+#endif
+
+	// Write the firmware "head"
+	current_step = 3;
+	ret = write_to_device(window, write_data_callback, TOW_BOOT_SOURCE_FILE, TARGET_BLOCK_DEVICE, 0, HEAD_SIZE);
+	if (ret != 0) {
+		lv_label_set_text_fmt(
+			private->progress_label,
+			"[ret = %d]\n"
+			"Unexpected failure while writing the head of the firmware.\n"
+			"Rebooting may leave the device (temporarily) unbootable...\n\n"
+			"Details:\n%s",
+			ret,
+			strerror(ret)
+		);
+
+		tbgui_theme_failure();
+		btn_enable_state(private->back_button, true);
+
+		return;
+	}
+
+#if LVGL_ENV_SIMULATOR == 1
+	usleep(SECOND_AS_MICROSECONDS);
+#endif
 
 	lv_label_set_text(
 		private->progress_label,
