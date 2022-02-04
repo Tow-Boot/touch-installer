@@ -161,7 +161,7 @@ void handle_erase(window_t* window)
 	uint64_t length = get_block_device_size(TARGET_BLOCK_DEVICE);
 #endif
 
-	write_to_device(window, write_data_callback, "/dev/zero", TARGET_BLOCK_DEVICE, length);
+	write_to_device(window, write_data_callback, "/dev/zero", TARGET_BLOCK_DEVICE, 0, length);
 
 	lv_label_set_text(
 		private->progress_label,

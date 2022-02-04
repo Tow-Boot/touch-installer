@@ -9,7 +9,7 @@
 #include "conf.h"
 #include "utils.h"
 
-int write_to_device(void* userdata, write_callback_function_t* cb, char* from_path, char* to_path, int length)
+int write_to_device(void* userdata, write_callback_function_t* cb, char* from_path, char* to_path, int start, int length)
 {
 	static char buf[TBGUI_WRITE_BLOCK_SIZE] __attribute__ ((__aligned__ (TBGUI_WRITE_BLOCK_SIZE)));
 
@@ -29,9 +29,10 @@ int write_to_device(void* userdata, write_callback_function_t* cb, char* from_pa
 		length = lseek(from, 0, SEEK_END);
 	}
 
-	lseek(from, 0, SEEK_SET);
+	lseek(from, start, SEEK_SET);
+	lseek(to,   start, SEEK_SET);
 
-	int i = 0;
+	int i = start;
 	int count = 0;
 	int ret = 0;
 
