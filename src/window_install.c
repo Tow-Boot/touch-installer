@@ -160,7 +160,7 @@ void handle_install(window_t* window)
 		fake_failure = 1;
 	}
 #else
-	ret = system("tow-boot-installer--install-checks");
+	ret = system("tow-boot-installer--install-checks > " TBGUI_CHECK_LOG_LOCATION);
 #endif
 
 	if (ret) {

@@ -126,7 +126,7 @@ void handle_erase(window_t* window)
 		fake_failure = 1;
 	}
 #else
-	ret = system("tow-boot-installer--erase-checks");
+	ret = system("tow-boot-installer--erase-checks > " TBGUI_CHECK_LOG_LOCATION);
 #endif
 
 	if (ret) {
