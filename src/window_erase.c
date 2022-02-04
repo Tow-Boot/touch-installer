@@ -161,7 +161,22 @@ void handle_erase(window_t* window)
 	uint64_t length = get_block_device_size(TARGET_BLOCK_DEVICE);
 #endif
 
-	write_to_device(window, write_data_callback, "/dev/zero", TARGET_BLOCK_DEVICE, 0, length);
+	ret = write_to_device(window, write_data_callback, "/Users/samuel/Projects/Tow-Boot/Tow-Boot-installer-gui/empty", TARGET_BLOCK_DEVICE, 0, length);
+	if (ret != 0) {
+		lv_label_set_text_fmt(
+			private->progress_label,
+			"[ret = %d]\n"
+			"Unexpected failure while erasing.\n"
+			"Details:\n%s",
+			ret,
+			strerror(ret)
+		);
+
+		tbgui_theme_failure();
+		btn_enable_state(private->back_button, true);
+
+		return;
+	}
 
 	lv_label_set_text(
 		private->progress_label,
