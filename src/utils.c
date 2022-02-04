@@ -22,6 +22,7 @@ int write_to_device(void* userdata, write_callback_function_t* cb, char* from_pa
 	int to = open(to_path, O_SYNC | O_WRONLY);
 	if (to == -1) {
 		fprintf(stderr, "ERROR: Opening “%s” failed, (%m)\n", to_path);
+		close(from);
 		return errno;
 	}
 
@@ -41,6 +42,8 @@ int write_to_device(void* userdata, write_callback_function_t* cb, char* from_pa
 
 		if (count < 0) {
 			fprintf(stderr, "ERROR: reading from “%s” failed, (%m)\n", from_path);
+			close(from);
+			close(to);
 			return errno;
 		}
 
@@ -48,6 +51,8 @@ int write_to_device(void* userdata, write_callback_function_t* cb, char* from_pa
 
 		if (ret < 0) {
 			fprintf(stderr, "ERROR: writing to “%s” failed, (%m)\n", to_path);
+			close(from);
+			close(to);
 			return errno;
 		}
 
@@ -56,6 +61,8 @@ int write_to_device(void* userdata, write_callback_function_t* cb, char* from_pa
 		cb(userdata, i, length);
 	}
 
+	close(from);
+	close(to);
 	return 0;
 }
 
@@ -71,8 +78,11 @@ uint64_t get_block_device_size(char* path)
 
 	if (ioctl(f, BLKGETSIZE64, &size) == -1) {
 		fprintf(stderr, "ERROR: Running ioctl against “%s” failed, (%m)\n", path);
+		close(f);
 		exit(2);
 	}
+
+	close(f);
 
 	return size;
 }
