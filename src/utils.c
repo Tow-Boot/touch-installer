@@ -9,9 +9,13 @@
 #include "conf.h"
 #include "utils.h"
 
-int write_to_device(void* userdata, write_callback_function_t* cb, char* from_path, char* to_path, int start, int length)
+int write_to_device(void* userdata, write_callback_function_t* cb, char* from_path, char* to_path, int start, int copy_length)
 {
 	static char buf[TBGUI_WRITE_BLOCK_SIZE] __attribute__ ((__aligned__ (TBGUI_WRITE_BLOCK_SIZE)));
+
+	int i = start;
+	int count = 0;
+	int ret = 0;
 
 	int from = open(from_path, O_RDONLY);
 	if (from == -1) {
@@ -26,18 +30,31 @@ int write_to_device(void* userdata, write_callback_function_t* cb, char* from_pa
 		return errno;
 	}
 
-	if (length == 0) {
-		length = lseek(from, 0, SEEK_END);
+	int input_length = lseek(from, 0, SEEK_END);
+	count = read(from, buf, TBGUI_WRITE_BLOCK_SIZE);
+	if (input_length == 0 && count == 0) {
+		fprintf(stderr, "ERROR: EOF at zero-length file in input.\n");
+		close(from);
+		close(to);
+		return 1000;
+	}
+
+	if (copy_length == 0) {
+		copy_length = input_length;
+	}
+
+	// /dev/zero is zero-length, but `read()` returns content.
+	if (input_length > 0 && copy_length > input_length) {
+		fprintf(stderr, "ERROR: Copying “%d” bytes from a “%d” long file is an error.\n", copy_length, input_length);
+		close(from);
+		close(to);
+		return 1001;
 	}
 
 	lseek(from, start, SEEK_SET);
 	lseek(to,   start, SEEK_SET);
 
-	int i = start;
-	int count = 0;
-	int ret = 0;
-
-	while (i < length) {
+	while (i < copy_length) {
 		count = read(from, buf, TBGUI_WRITE_BLOCK_SIZE);
 
 		if (count < 0) {
@@ -58,7 +75,7 @@ int write_to_device(void* userdata, write_callback_function_t* cb, char* from_pa
 
 		i += count;
 
-		cb(userdata, i, length);
+		cb(userdata, i, copy_length);
 	}
 
 	close(from);
