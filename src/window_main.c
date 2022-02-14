@@ -20,6 +20,7 @@ window_t* tbgui_main_window_init(void)
 		"This application is used to manage the Tow-Boot installation on your " DEVICE_NAME ".\n"
 		"\nTow-Boot will be installed on " INSTALL_LOCATION ".\n"
 #if TBGUI_INSTALL_TO_EMMC == 1 || LVGL_ENV_SIMULATOR == 1
+		// Note that this does **not* apply to eMMC boot partitions.
 		"\nInstalling to eMMC will ERASE the internal storage content.\n"
 #endif
 		"\nUse one of the following options."
@@ -32,7 +33,7 @@ window_t* tbgui_main_window_init(void)
 		APP_ACTION_INSTALL,
 		"Install Tow-Boot to " INSTALL_LOCATION
 	);
-#if TBGUI_INSTALL_TO_SPI || LVGL_ENV_SIMULATOR
+#if TBGUI_INSTALL_TO_SPI || TBGUI_INSTALL_TO_EMMCBOOT || LVGL_ENV_SIMULATOR
 	add_button(
 		window->actions_container,
 		APP_ACTION_ERASE,

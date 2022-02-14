@@ -14,6 +14,9 @@
 #ifndef TBGUI_INSTALL_TO_EMMC
 #	define TBGUI_INSTALL_TO_EMMC 0
 #endif
+#ifndef TBGUI_INSTALL_TO_EMMCBOOT
+#	define TBGUI_INSTALL_TO_EMMCBOOT 0
+#endif
 
 #if LVGL_ENV_SIMULATOR == 1
 #define TBGUI_ASSETS_PATH "./"
@@ -43,6 +46,8 @@
 #	define INSTALL_LOCATION "SPI Flash"
 #	elif TBGUI_INSTALL_TO_EMMC
 #	define INSTALL_LOCATION "eMMC"
+#	elif TBGUI_INSTALL_TO_EMMCBOOT
+#	define INSTALL_LOCATION "eMMC Boot"
 #	else
 #	error TBGUI_INSTALL_TO_XXX not given
 #	endif
